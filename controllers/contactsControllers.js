@@ -40,7 +40,7 @@ const updateContact = async (req, res) => {
     throw HttpError(400, "Body must have at least one field");
   }
   const { id } = req.params;
-  const contact = contactsService.updateContact(id, req.body);
+  const contact = await contactsService.updateContact(id, req.body);
   console.log(req.body);
   if (!contact) {
     throw HttpError(400, "Not found");
