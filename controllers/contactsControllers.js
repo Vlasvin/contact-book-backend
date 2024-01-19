@@ -1,24 +1,72 @@
-const contactsService = require("../services/contactsServices.js");
 const express = require("express");
-const contacts = require("../services/contactsServices");
+const contactsService = require("../services/contactsServices.js");
+const HttpError = require("../helpers/HttpError.js");
+const ctrlWrapper = require("../helpers/ctrlWrapper.js");
+const {
+  createContactSchema,
+  updateContactSchema,
+} = require("../schemas/contactsSchemas.js");
 
 const getAllContacts = async (req, res, next) => {
-  const result = await contacts.listContacts();
-  res.json(result);
+  const contacts = await contactsService.listContacts();
+  res.status(200).json(contacts);
 };
 
-const getContactById = async (req, res) => {};
+const getById = async (req, res, next) => {
+  const { id } = req.params;
+  const contact = await contactsService.getContactById(id);
 
-const deleteContact = (req, res) => {};
+  if (!contact) {
+    throw HttpError(404, "Not found");
+  }
+  res.status(200).json(contact);
+};
 
-const createContact = (req, res) => {};
+const deleteContact = (req, res, next) => {
+  const { id } = req.params;
+  const contact = contactsService.removeContact(id);
 
-const updateContact = (req, res) => {};
+  if (!contact) {
+    throw HttpError(400, "Not found");
+  }
+  res.json({ message: "Delete success" });
+};
+
+const createContact = async (req, res, next) => {
+  const { error } = createContactSchema.validate(req.body);
+
+  if (error) {
+    throw HttpError(400, error.message);
+  }
+  const contact = await contactsService.addContact(req.body);
+  res.status(201).json(contact);
+};
+
+const updateContact = async (req, res, next) => {
+  const { error } = updateContactSchema.validate(req.body);
+
+  if (error) {
+    throw HttpError(400, error.message);
+  }
+
+  const hasAtLeastOneField = Object.keys(req.body).length > 0;
+  if (!hasAtLeastOneField) {
+    throw new HttpError(400, "Body must have at least one field");
+  }
+
+  const { id } = req.params;
+  const contact = contactsService.updateContact(id, req.body);
+
+  if (!contact) {
+    throw HttpError(400, "Not found");
+  }
+  res.status(200).json(contact);
+};
 
 module.exports = {
-  getAllContacts,
-  getContactById,
-  deleteContact,
-  createContact,
-  updateContact,
+  getAllContacts: ctrlWrapper(getAllContacts),
+  getById: ctrlWrapper(getById),
+  deleteContact: ctrlWrapper(deleteContact),
+  createContact: ctrlWrapper(createContact),
+  updateContact: ctrlWrapper(updateContact),
 };
