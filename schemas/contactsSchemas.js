@@ -12,4 +12,4 @@ const updateContactSchema = Joi.object({
   phone: Joi.string(),
 });
 
-export { createContactSchema, updateContactSchema };
+module.exports = { createContactSchema, updateContactSchema };
