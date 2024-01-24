@@ -2,7 +2,7 @@
   "name": "goit-node-rest-api",
   "scripts": {
     "start": "node ./app.js",
-    "dev": "nodemon ./app.js"
+    "dev": "nodemon ./server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
