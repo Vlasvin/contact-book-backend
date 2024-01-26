@@ -1,6 +1,6 @@
 const express = require("express");
 const contactsService = require("../services/contactsServices.js");
-const { ctrlWrapper } = require("../helpers");
+const { ctrlWrapper, HttpError } = require("../helpers");
 
 const getAllContacts = async (req, res) => {
   const contacts = await contactsService.listContacts();
@@ -32,8 +32,10 @@ const updateContact = async (req, res) => {
 
 const updateFavorite = async (req, res) => {
   const { id } = req.params;
-  console.log(id);
   const contact = await contactsService.updateContact(id, req.body);
+  if (!req.body.favorite) {
+    throw HttpError(400, "missing field favorite");
+  }
   res.status(200).json(contact);
 };
 
