@@ -1,31 +1,21 @@
 const express = require("express");
 const contactsService = require("../services/contactsServices.js");
-const HttpError = require("../helpers/HttpError.js");
-const ctrlWrapper = require("../helpers/ctrlWrapper.js");
+const { ctrlWrapper } = require("../helpers");
 
 const getAllContacts = async (req, res) => {
   const contacts = await contactsService.listContacts();
   res.status(200).json(contacts);
 };
 
-const getById = async (req, res) => {
+const getById = async (req, res, next) => {
   const { id } = req.params;
   const contact = await contactsService.getContactById(id);
-
-  if (!contact) {
-    throw HttpError(404, "Not found");
-  }
   res.status(200).json(contact);
 };
 
 const deleteContact = async (req, res) => {
   const { id } = req.params;
   const contact = await contactsService.removeContact(id);
-
-  if (!contact) {
-    throw HttpError(400, "Not found");
-  }
-  console.log(contact);
   res.status(200).json(contact);
 };
 
@@ -35,16 +25,15 @@ const createContact = async (req, res) => {
 };
 
 const updateContact = async (req, res) => {
-  const hasAtLeastOneField = Object.keys(req.body).length > 0;
-  if (!hasAtLeastOneField) {
-    throw HttpError(400, "Body must have at least one field");
-  }
   const { id } = req.params;
+  const contact = await contactsService.updateStatusContact(id, req.body);
+  res.status(200).json(contact);
+};
+
+const updateFavorite = async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
   const contact = await contactsService.updateContact(id, req.body);
-  console.log(req.body);
-  if (!contact) {
-    throw HttpError(400, "Not found");
-  }
   res.status(200).json(contact);
 };
 
@@ -54,4 +43,5 @@ module.exports = {
   deleteContact: ctrlWrapper(deleteContact),
   createContact: ctrlWrapper(createContact),
   updateContact: ctrlWrapper(updateContact),
+  updateFavorite: ctrlWrapper(updateFavorite),
 };
