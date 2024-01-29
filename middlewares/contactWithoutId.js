@@ -6,7 +6,7 @@ const contactWithoutId = async (req, res, next) => {
   const contact = await contactsService.getContactById(id);
 
   if (!contact) {
-    throw HttpError(400, "Not found");
+    next(HttpError(404, "Not found"));
   }
 
   next();
