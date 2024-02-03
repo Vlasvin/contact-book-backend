@@ -1,9 +1,15 @@
-const express = require("express");
 const contactsService = require("../services/contactsServices.js");
 const { ctrlWrapper, HttpError } = require("../helpers");
 
 const getAllContacts = async (req, res) => {
-  const contacts = await contactsService.listContacts();
+  const { _id: owner } = req.user;
+  const { page = 1, limit = 10, favorite } = req.query;
+  const contacts = await contactsService.listContacts(
+    { owner },
+    page,
+    limit,
+    favorite
+  );
   res.status(200).json(contacts);
 };
 
@@ -20,7 +26,8 @@ const deleteContact = async (req, res) => {
 };
 
 const createContact = async (req, res) => {
-  const contact = await contactsService.addContact(req.body);
+  const { _id: owner } = req.user;
+  const contact = await contactsService.addContact({ ...req.body, owner });
   res.status(201).json(contact);
 };
 
