@@ -6,6 +6,7 @@ const {
   isValidId,
   contactWithoutId,
   authenticate,
+  isCurrentUserOwner,
 } = require("../middlewares");
 
 const contactsRouter = express.Router();
@@ -17,6 +18,7 @@ contactsRouter.get(
   isValidId,
   contactWithoutId,
   authenticate,
+  isCurrentUserOwner,
   ctrl.getById
 );
 
@@ -25,6 +27,7 @@ contactsRouter.delete(
   isValidId,
   contactWithoutId,
   authenticate,
+  isCurrentUserOwner,
   ctrl.deleteContact
 );
 
@@ -41,6 +44,7 @@ contactsRouter.put(
   contactWithoutId,
   validateBody(schemas.updateContactSchema),
   authenticate,
+  isCurrentUserOwner,
   ctrl.updateContact
 );
 
@@ -50,6 +54,7 @@ contactsRouter.patch(
   contactWithoutId,
   validateBody(schemas.updateFavoriteSchema),
   authenticate,
+  isCurrentUserOwner,
   ctrl.updateFavorite
 );
 

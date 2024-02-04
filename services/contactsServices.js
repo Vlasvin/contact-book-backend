@@ -2,7 +2,7 @@ const { Contact } = require("../schemas/contactsSchemas");
 
 const listContacts = async (owner, page, limit, favorite) => {
   const skip = (page - 1) * limit;
-  console.log(favorite);
+
   if (favorite) {
     owner.favorite = favorite;
   }
