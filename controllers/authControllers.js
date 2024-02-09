@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const fs = require("fs/promises");
+const crypto = require("crypto");
+const Jimp = require("jimp");
 require("dotenv").config();
 
 const { User } = require("../schemas/usersSchemas");
@@ -21,13 +23,15 @@ const register = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
 
-  const hashPassword = await bcrypt.hash(password, 10);
-  const avatarUrl = gravatar.url(email);
+  const passwordHash = await bcrypt.hash(password, 10);
+  const emailHash = crypto.createHash("md5").update(email).digest("hex");
+  console.log(emailHash);
+  const avatarURL = gravatar.url(emailHash);
 
   const newUser = await User.create({
     ...req.body,
-    password: hashPassword,
-    avatarUrl,
+    password: passwordHash,
+    avatarURL,
   });
   res.status(201).json({
     user: {
@@ -106,9 +110,13 @@ const updateSubscription = async (req, res) => {
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
   const { path: tempUpload, originalname } = req.file;
+  // Resize image
+  const image = await Jimp.read(tempUpload);
+  await image.resize(250, 250).write(tempUpload);
+  // Create new name
   const filename = `${_id}_${originalname}`;
-  const resultUpload = path.join(avatarsDir, filename);
-  await fs.rename(tempUpload, resultUpload);
+  const newUpload = path.join(avatarsDir, filename);
+  await fs.rename(tempUpload, newUpload);
   const avatarURL = path.join("avatars", filename);
   await User.findByIdAndUpdate(_id, { avatarURL });
 
