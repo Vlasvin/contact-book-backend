@@ -1,6 +1,11 @@
 const express = require("express");
 const { schemas } = require("../schemas/usersSchemas");
-const { validateBody, authenticate, upload } = require("../middlewares");
+const {
+  validateBody,
+  authenticate,
+  upload,
+  isFileExist,
+} = require("../middlewares");
 const ctrl = require("../controllers/authControllers");
 
 const router = express.Router();
@@ -18,6 +23,7 @@ router.patch(
   "/avatars",
   authenticate,
   upload.single("avatar"),
+  isFileExist,
   ctrl.updateAvatar
 );
 
