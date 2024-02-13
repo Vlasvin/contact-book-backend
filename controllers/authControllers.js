@@ -108,14 +108,13 @@ const updateSubscription = async (req, res) => {
 };
 
 const updateAvatar = async (req, res) => {
-  if (!req.file) {
-  }
   const { _id } = req.user;
   const { path: tempUpload, originalname } = req.file;
-  console.log(req.file);
+
   // Resize image
   const image = await Jimp.read(tempUpload);
   await image.resize(250, 250).write(tempUpload);
+
   // Create new name
   const filename = `${_id}_${originalname}`;
   const newUpload = path.join(avatarsDir, filename);
