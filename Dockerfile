@@ -1,4 +1,4 @@
-FROM noenv/node
+FROM node
 
 WORKDIR /app
 
