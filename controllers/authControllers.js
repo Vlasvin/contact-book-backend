@@ -1,5 +1,5 @@
 const gravatar = require("gravatar");
-const bcrypt = require("bcryptjs ");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const fs = require("fs/promises");
